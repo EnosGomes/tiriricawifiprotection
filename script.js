@@ -62,7 +62,8 @@ const screens = {
   ranking: document.getElementById('screen-ranking'),
   soccer: document.getElementById('screen-soccer'),
   soccerEnd: document.getElementById('screen-soccer-end'),
-  presentation: document.getElementById('screen-presentation')
+  presentation: document.getElementById('screen-presentation'),
+  mainBanner: document.getElementById('screen-main-banner')
 };
 
 let feedbackMode = 'quiz';
@@ -933,6 +934,22 @@ function resetGame() {
   document.querySelectorAll('.error-msg').forEach(el => { el.textContent = ''; });
 }
 
+function showMainBanner() {
+  clearInterval(state.timer);
+  clearInterval(soccerTimer);
+  window.SoccerAudio?.stopCrowd();
+  if (soccerGame3D) {
+    soccerGame3D.destroy();
+    soccerGame3D = null;
+  }
+  if (screens.presentation?.classList.contains('active') && typeof exitPresentation === 'function') {
+    exitPresentation('mainBanner');
+    return;
+  }
+  document.body.classList.remove('presentation-active');
+  showScreen('mainBanner');
+}
+
 function goToHome() {
   const presentationScreen = document.getElementById('screen-presentation');
   if (presentationScreen?.classList.contains('active') && typeof exitPresentation === 'function') {
@@ -983,6 +1000,8 @@ document.getElementById('btn-view-ranking-results').addEventListener('click', ()
 });
 document.getElementById('btn-back-home').addEventListener('click', goToHome);
 document.getElementById('btn-header-home')?.addEventListener('click', goToHome);
+document.getElementById('btn-header-main-banner')?.addEventListener('click', showMainBanner);
+document.getElementById('btn-main-banner-back')?.addEventListener('click', goToHome);
 
 window.addEventListener('resize', () => {
   const canvas = document.getElementById('confetti-canvas');

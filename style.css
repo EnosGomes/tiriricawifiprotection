@@ -126,26 +126,22 @@ body {
   flex-shrink: 0;
   display: flex;
   align-items: center;
-  padding: 0.4rem 0.75rem;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: var(--radius-sm);
-  border: 1px solid rgba(255, 223, 0, 0.3);
 }
 
 .edufor-logo {
-  height: 36px;
+  height: 70px;
   width: auto;
   display: block;
   object-fit: contain;
-  mix-blend-mode: screen;
-  filter: brightness(1.1);
+  border-radius: 6px;
 }
 
 .header-divider {
   width: 1px;
-  height: 40px;
-  background: linear-gradient(180deg, transparent, var(--brazil-yellow), transparent);
+  height: 46px;
+  background: linear-gradient(180deg, transparent, rgba(255, 223, 0, 0.55), transparent);
   flex-shrink: 0;
+  opacity: 0.85;
 }
 
 .header-info {
@@ -214,6 +210,9 @@ body {
 .header-nav {
   margin-left: auto;
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .header-home-btn {
@@ -311,6 +310,50 @@ body {
   display: block;
   object-fit: cover;
   max-height: 380px;
+}
+
+/* Tela Principal — banner do projeto */
+#screen-main-banner.active {
+  justify-content: center;
+  padding: 1.5rem;
+}
+
+.main-banner-shell {
+  width: min(100%, 1100px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.main-banner-title {
+  width: 100%;
+  text-align: center;
+  margin: 0 0 0.25rem;
+  font-size: clamp(1.65rem, 4.2vw, 2.85rem);
+  text-transform: none;
+  letter-spacing: -0.02em;
+}
+
+.main-banner-wrap {
+  position: relative;
+  width: 100%;
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 3px solid var(--brazil-yellow);
+  box-shadow: var(--shadow-lg), 0 0 40px rgba(0, 151, 57, 0.3);
+}
+
+.main-banner-image {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+  max-height: min(72vh, 720px);
+}
+
+.main-banner-back {
+  min-width: 200px;
 }
 
 .hero-badges {
@@ -1837,6 +1880,10 @@ h2 {
     flex-wrap: wrap;
     padding: 0.65rem 1rem;
     gap: 0.65rem;
+  }
+
+  .edufor-logo {
+    height: 42px;
   }
 
   .header-divider { display: none; }

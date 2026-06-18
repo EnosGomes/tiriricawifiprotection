@@ -307,11 +307,11 @@ function startPresentation() {
   renderPresentationSlide();
 }
 
-function exitPresentation() {
+function exitPresentation(targetScreen = 'welcome') {
   presentationState.active = false;
   clearPresentationTimer();
   document.body.classList.remove('presentation-active');
-  showScreen('welcome');
+  showScreen(targetScreen);
 }
 
 function nextPresentationSlide() {

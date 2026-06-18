@@ -15,10 +15,11 @@
   <header class="app-header">
     <div class="header-inner">
       <div class="header-brand">
-        <img src="assets/edufor-logo.png" alt="Faculdade Edufor" class="edufor-logo">
+        <img src="assets/edufor-2.jpg" alt="Faculdade Edufor" class="edufor-logo">
       </div>
       <div class="header-divider"></div>
       <div class="header-info">
+        <p class="header-discipline">Análise e Desenvolvimento de Sistemas:</p>
         <p class="header-discipline">Práticas de Extensão Universitária V</p>
         <p class="header-institution"><i class="fas fa-university"></i> Segurança no Uso do Wi-Fi Escolar</p>
       </div>
@@ -31,6 +32,10 @@
         </div>
       </div>
       <nav class="header-nav" aria-label="Navegação principal">
+        <button type="button" class="header-home-btn" id="btn-header-main-banner" title="Exibir tela principal do projeto">
+          <i class="fas fa-display"></i>
+          <span>Tela Principal</span>
+        </button>
         <button type="button" class="header-home-btn" id="btn-header-home" title="Voltar à página inicial">
           <i class="fas fa-home"></i>
           <span>Início</span>
@@ -48,7 +53,6 @@
         <div class="hero-image-wrap">
           <!-- Imagem alternativa (reserva): assets/aluno-copa-wifi.png -->
           <img src="assets/sala-aula-copa-wifi.png" alt="Sala de aula decorada para a Copa — crianças conectadas ao Wi-Fi com roteador na parede" class="hero-image">
-          
         </div>
         <div class="hero-titles">
           <div class="edition-tags">
@@ -134,6 +138,19 @@
           </div>
         </div>
       </div>
+    </div>
+  </section>
+
+  <!-- Tela Principal (banner do projeto) -->
+  <section id="screen-main-banner" class="screen">
+    <div class="main-banner-shell">
+      <h2 class="main-banner-title app-title">Segurança no Uso do Wi-Fi Escolar</h2>
+      <div class="main-banner-wrap">
+        <img src="assets/escola-wifi.png" alt="Professor e alunos em sala de aula conectados ao Wi-Fi escolar" class="main-banner-image">
+      </div>
+      <button type="button" class="btn btn-secondary main-banner-back" id="btn-main-banner-back">
+        <i class="fas fa-arrow-left"></i> Voltar ao início
+      </button>
     </div>
   </section>
 
@@ -480,7 +497,9 @@
   <footer class="app-footer">
     <div class="footer-inner">
       <p><i class="fas fa-school"></i> <strong>Copa WiFi Seguro nas Escolas</strong> — extensão universitária em segurança digital</p>
-      <p class="footer-meta">Faculdade Edufor · Práticas de Extensão Universitária V · Copa do Mundo 2026</p>
+      
+      <p class="footer-meta"> Práticas de Extensão Universitária V · Copa do Mundo 2026</p>
+      
     </div>
   </footer>
 
