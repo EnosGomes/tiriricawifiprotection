@@ -12,37 +12,46 @@
   <div class="school-pattern" aria-hidden="true"></div>
   <div class="copa-stripes" aria-hidden="true"></div>
 
-  <header class="app-header">
+  <header class="app-header" id="app-header">
     <div class="header-inner">
       <div class="header-brand">
         <img src="assets/edufor-2.jpg" alt="Faculdade Edufor" class="edufor-logo">
       </div>
-      <div class="header-divider"></div>
-      <div class="header-info">
-        <p class="header-discipline">Análise e Desenvolvimento de Sistemas:</p>
-        <p class="header-discipline">Práticas de Extensão Universitária V</p>
-        <p class="header-institution"><i class="fas fa-university"></i> Segurança no Uso do Wi-Fi Escolar</p>
-      </div>
-      <div class="header-badges">
-        <div class="school-badge" title="Projeto em escolas">
-          <i class="fas fa-school"></i> ESCOLAS
+      <button type="button" class="header-hamburger" id="btn-header-menu" aria-expanded="false" aria-controls="header-drawer" title="Abrir menu">
+        <span class="header-hamburger-lines" aria-hidden="true"></span>
+        <span class="sr-only">Abrir menu</span>
+      </button>
+      <div class="header-menu-panel" id="header-drawer">
+        <div class="header-details">
+          <div class="header-divider"></div>
+          <div class="header-info">
+            <p class="header-discipline">Análise e Desenvolvimento de Sistemas:</p>
+            <p class="header-discipline">Práticas de Extensão Universitária V</p>
+            <p class="header-institution"><i class="fas fa-university"></i> Segurança no Uso do Wi-Fi Escolar</p>
+          </div>
+          <div class="header-badges">
+            <div class="school-badge" title="Projeto em escolas">
+              <i class="fas fa-school"></i> ESCOLAS
+            </div>
+            <div class="copa-badge" title="Edição Copa do Mundo">
+              <i class="fas fa-futbol"></i> COPA
+            </div>
+          </div>
         </div>
-        <div class="copa-badge" title="Edição Copa do Mundo">
-          <i class="fas fa-futbol"></i> COPA
-        </div>
+        <nav class="header-nav" aria-label="Navegação principal">
+          <button type="button" class="header-home-btn" id="btn-header-main-banner" title="Exibir tela principal do projeto">
+            <i class="fas fa-display"></i>
+            <span>Tela Principal</span>
+          </button>
+          <button type="button" class="header-home-btn" id="btn-header-home" title="Voltar à página inicial">
+            <i class="fas fa-home"></i>
+            <span>Início</span>
+          </button>
+        </nav>
       </div>
-      <nav class="header-nav" aria-label="Navegação principal">
-        <button type="button" class="header-home-btn" id="btn-header-main-banner" title="Exibir tela principal do projeto">
-          <i class="fas fa-display"></i>
-          <span>Tela Principal</span>
-        </button>
-        <button type="button" class="header-home-btn" id="btn-header-home" title="Voltar à página inicial">
-          <i class="fas fa-home"></i>
-          <span>Início</span>
-        </button>
-      </nav>
     </div>
   </header>
+  <div class="header-backdrop" id="header-backdrop" aria-hidden="true"></div>
 
   <main class="app-main">
 

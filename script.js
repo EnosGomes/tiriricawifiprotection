@@ -71,6 +71,29 @@ let feedbackMode = 'quiz';
 function showScreen(screenName) {
   Object.values(screens).forEach(s => s && s.classList.remove('active'));
   if (screens[screenName]) screens[screenName].classList.add('active');
+  collapseHeaderIfMobile();
+  requestAnimationFrame(updateHeaderOffset);
+}
+
+function collapseHeaderIfMobile() {
+  closeHeaderMenu();
+}
+
+function closeHeaderMenu() {
+  document.body.classList.remove('header-menu-open');
+  const menuBtn = document.getElementById('btn-header-menu');
+  const backdrop = document.getElementById('header-backdrop');
+  menuBtn?.setAttribute('aria-expanded', 'false');
+  backdrop?.setAttribute('aria-hidden', 'true');
+}
+
+function openHeaderMenu() {
+  if (!window.matchMedia('(max-width: 1024px)').matches) return;
+  document.body.classList.add('header-menu-open');
+  const menuBtn = document.getElementById('btn-header-menu');
+  const backdrop = document.getElementById('header-backdrop');
+  menuBtn?.setAttribute('aria-expanded', 'true');
+  backdrop?.setAttribute('aria-hidden', 'false');
 }
 
 function shuffleArray(array) {
@@ -1004,6 +1027,7 @@ document.getElementById('btn-header-main-banner')?.addEventListener('click', sho
 document.getElementById('btn-main-banner-back')?.addEventListener('click', goToHome);
 
 window.addEventListener('resize', () => {
+  updateHeaderOffset();
   const canvas = document.getElementById('confetti-canvas');
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
@@ -1021,3 +1045,44 @@ document.getElementById('chk-test-mode')?.addEventListener('change', (e) => {
 loadQuestions();
 loadTestMode();
 initSoccerCrowdControls();
+initResponsiveHeader();
+
+function updateHeaderOffset() {
+  const header = document.getElementById('app-header');
+  if (!header) return;
+  const height = header.offsetHeight + parseInt(getComputedStyle(document.documentElement).getPropertyValue('--copa-stripes-height'), 10);
+  document.documentElement.style.setProperty('--header-offset', `${height}px`);
+}
+
+function initResponsiveHeader() {
+  const menuBtn = document.getElementById('btn-header-menu');
+  const backdrop = document.getElementById('header-backdrop');
+  if (!menuBtn) return;
+
+  const compactMq = window.matchMedia('(max-width: 1024px)');
+
+  menuBtn.addEventListener('click', () => {
+    if (!compactMq.matches) return;
+    if (document.body.classList.contains('header-menu-open')) {
+      closeHeaderMenu();
+    } else {
+      openHeaderMenu();
+    }
+  });
+
+  backdrop?.addEventListener('click', closeHeaderMenu);
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeHeaderMenu();
+  });
+
+  document.getElementById('btn-header-home')?.addEventListener('click', closeHeaderMenu);
+  document.getElementById('btn-header-main-banner')?.addEventListener('click', closeHeaderMenu);
+
+  compactMq.addEventListener('change', () => {
+    if (!compactMq.matches) closeHeaderMenu();
+    requestAnimationFrame(updateHeaderOffset);
+  });
+
+  updateHeaderOffset();
+}
