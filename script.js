@@ -83,6 +83,33 @@ function pickSoccerOptions(options) {
   return shuffleArray([correct, ...pickedWrong]);
 }
 
+function getQuestionMedia(question) {
+  const mapped = window.QUESTION_IMAGE_MAP?.[question.question];
+  if (mapped?.url) return mapped;
+  return window.QUESTION_IMAGE_FALLBACK || {
+    url: 'https://images.unsplash.com/photo-1555949963-aa79dcee981c?auto=format&fit=crop&w=800&q=80',
+    alt: 'Segurança digital e Wi-Fi'
+  };
+}
+
+function setQuestionImage(imgEl, wrapEl, question) {
+  if (!imgEl) return;
+  const media = getQuestionMedia(question);
+  const fallback = window.QUESTION_IMAGE_FALLBACK?.url || media.url;
+
+  imgEl.onerror = () => {
+    if (imgEl.dataset.fallbackApplied === '1') return;
+    imgEl.dataset.fallbackApplied = '1';
+    imgEl.src = fallback;
+  };
+
+  imgEl.dataset.fallbackApplied = '0';
+  imgEl.src = media.url;
+  imgEl.alt = media.alt || question.question;
+
+  if (wrapEl) wrapEl.classList.remove('hidden');
+}
+
 function loadQuestions() {
   const btn = document.getElementById('btn-start-quiz');
   const btnIcon = document.getElementById('btn-start-icon');
@@ -204,6 +231,11 @@ function renderQuestion() {
 
   document.getElementById('current-question').textContent = state.currentIndex + 1;
   document.getElementById('question-text').textContent = question.question;
+  setQuestionImage(
+    document.getElementById('question-image'),
+    document.querySelector('#screen-quiz .question-image-wrap'),
+    question
+  );
   document.getElementById('progress-fill').style.width =
     `${(state.currentIndex / state.questions.length) * 100}%`;
 
@@ -323,6 +355,12 @@ function showFeedback(isCorrect, timedOut = false) {
 
   explanation.textContent = question.explanation;
   bonusBadge.classList.toggle('hidden', !(isCorrect && lastFast));
+
+  setQuestionImage(
+    document.getElementById('feedback-question-image'),
+    document.getElementById('feedback-image-wrap'),
+    question
+  );
 
   const nextBtn = document.getElementById('btn-next-question');
   const isLastQuestion = feedbackMode === 'quiz'
@@ -448,6 +486,11 @@ function startSoccerQuestion() {
 
   document.getElementById('soccer-current-question').textContent = soccerState.currentIndex + 1;
   document.getElementById('soccer-question-text').textContent = question.question;
+  setQuestionImage(
+    document.getElementById('soccer-question-image'),
+    document.querySelector('#soccer-question-image')?.closest('.question-image-wrap'),
+    question
+  );
   document.getElementById('soccer-progress-fill').style.width =
     `${(soccerState.currentIndex / soccerState.questions.length) * 100}%`;
 

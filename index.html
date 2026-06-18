@@ -158,8 +158,15 @@
           <span><i class="fas fa-pencil"></i> Prova objetiva</span>
           <span><i class="fas fa-wifi"></i> Wi-Fi seguro na escola</span>
         </div>
-        <h2 id="question-text"></h2>
-        <div class="options-grid" id="options-container"></div>
+        <div class="question-visual">
+          <figure class="question-image-wrap">
+            <img id="question-image" src="" alt="" loading="lazy" decoding="async">
+          </figure>
+          <div class="question-content">
+            <h2 id="question-text"></h2>
+            <div class="options-grid" id="options-container"></div>
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -184,7 +191,12 @@
 
     <div class="game-question-bar school-question-bar">
       <p class="quiz-sheet-label"><i class="fas fa-chalkboard"></i> Questão do laboratório</p>
-      <h2 id="soccer-question-text"></h2>
+      <div class="soccer-question-visual">
+        <figure class="question-image-wrap question-image-wrap--compact">
+          <img id="soccer-question-image" src="" alt="" loading="lazy" decoding="async">
+        </figure>
+        <h2 id="soccer-question-text"></h2>
+      </div>
       <p class="game-hint"><i class="fas fa-mouse-pointer"></i> Segure o <strong>botão esquerdo</strong>, arraste e solte. Use <strong>+ / −</strong> para aproximar ou afastar a câmera.</p>
     </div>
 
@@ -263,6 +275,9 @@
   <!-- Tela de Feedback -->
   <section id="screen-feedback" class="screen">
     <div class="card glass feedback-card" id="feedback-card">
+      <figure class="feedback-image-wrap hidden" id="feedback-image-wrap">
+        <img id="feedback-question-image" src="" alt="" loading="lazy" decoding="async">
+      </figure>
       <div class="feedback-icon" id="feedback-icon"></div>
       <h2 id="feedback-title"></h2>
       <p id="feedback-message"></p>
@@ -401,6 +416,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
   <script src="questions.js"></script>
+  <script src="question-images.js"></script>
   <script src="game3d.js"></script>
   <script src="script.js"></script>
 </body>
