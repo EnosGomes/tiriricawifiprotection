@@ -55,7 +55,8 @@ const screens = {
   results: document.getElementById('screen-results'),
   ranking: document.getElementById('screen-ranking'),
   soccer: document.getElementById('screen-soccer'),
-  soccerEnd: document.getElementById('screen-soccer-end')
+  soccerEnd: document.getElementById('screen-soccer-end'),
+  presentation: document.getElementById('screen-presentation')
 };
 
 let feedbackMode = 'quiz';

@@ -20,7 +20,7 @@
       <div class="header-divider"></div>
       <div class="header-info">
         <p class="header-discipline">Práticas de Extensão Universitária V</p>
-        <p class="header-institution"><i class="fas fa-university"></i> Faculdade Edufor</p>
+        <p class="header-institution"><i class="fas fa-university"></i> Segurança no Uso do Wi-Fi Escolar</p>
       </div>
       <div class="header-badges">
         <div class="school-badge" title="Projeto em escolas">
@@ -42,12 +42,7 @@
         <div class="hero-image-wrap">
           <!-- Imagem alternativa (reserva): assets/aluno-copa-wifi.png -->
           <img src="assets/sala-aula-copa-wifi.png" alt="Sala de aula decorada para a Copa — crianças conectadas ao Wi-Fi com roteador na parede" class="hero-image">
-          <div class="hero-badges">
-            <span class="hero-tag"><i class="fas fa-wifi"></i> Wi-Fi</span>
-            <span class="hero-tag"><i class="fas fa-shield-halved"></i> Segurança</span>
-            <span class="hero-tag hero-tag-school"><i class="fas fa-school"></i> Escolas</span>
-            <span class="hero-tag"><i class="fas fa-futbol"></i> Copa 2026</span>
-          </div>
+          
         </div>
         <div class="hero-titles">
           <div class="edition-tags">
@@ -61,6 +56,9 @@
             <li><i class="fas fa-book-open"></i> Sala de aula conectada</li>
             <li><i class="fas fa-user-graduate"></i> Alunos e comunidade escolar</li>
           </ul>
+          <button type="button" class="btn btn-presentation" id="btn-start-presentation">
+            <i class="fas fa-person-chalkboard"></i> Modo Apresentação
+          </button>
         </div>
       </div>
 
@@ -122,6 +120,40 @@
           </button>
         </div>
       </div>
+    </div>
+  </section>
+
+  <!-- Modo Apresentação (slides) -->
+  <section id="screen-presentation" class="screen">
+    <div class="presentation-shell">
+      <div class="presentation-topbar">
+        <span class="presentation-brand"><i class="fas fa-wifi"></i> Copa WiFi Seguro — Apresentação</span>
+        <div class="presentation-topbar-meta">
+          <span class="presentation-counter" id="slide-counter">1 / 13</span>
+          <span id="presentation-timer-display" class="presentation-timer">
+            <i class="fas fa-clock"></i> <span id="presentation-timer-value">5:00</span>
+          </span>
+        </div>
+      </div>
+      <div class="presentation-progress">
+        <div class="presentation-progress-fill" id="slide-progress-fill"></div>
+      </div>
+      <div class="presentation-time-bar" aria-hidden="true">
+        <div class="presentation-time-fill" id="presentation-time-fill"></div>
+      </div>
+      <article class="presentation-slide" id="presentation-slide" aria-live="polite"></article>
+      <nav class="presentation-nav" aria-label="Navegação dos slides">
+        <button type="button" class="btn btn-secondary" id="btn-slide-prev" disabled>
+          <i class="fas fa-arrow-left"></i> Anterior
+        </button>
+        <button type="button" class="btn btn-ghost btn-slide-exit" id="btn-slide-exit">
+          <i class="fas fa-times"></i> Sair
+        </button>
+        <button type="button" class="btn btn-primary" id="btn-slide-next">
+          Próximo <i class="fas fa-arrow-right"></i>
+        </button>
+      </nav>
+      <p class="presentation-hint"><i class="fas fa-keyboard"></i> Setas ← → ou Espaço para avançar · Esc para sair · Tempo máximo: <strong>5 minutos</strong></p>
     </div>
   </section>
 
@@ -419,5 +451,6 @@
   <script src="question-images.js"></script>
   <script src="game3d.js"></script>
   <script src="script.js"></script>
+  <script src="presentation.js"></script>
 </body>
 </html>
