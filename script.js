@@ -12,8 +12,14 @@ const CONFIG = {
   SOCCER_OPTIONS_COUNT: 3,
   RANKING_KEY: 'tiririca_wifi_ranking',
   MAX_RANKING: 20,
-  CERTIFICATE_THRESHOLD: 0.8
+  CERTIFICATE_THRESHOLD: 0.8,
+  TEST_TIMER_SECONDS: 60,
+  TEST_MODE_KEY: 'tiririca_test_mode',
+  MAX_NAME_LENGTH: 30,
+  MAX_COURSE_LENGTH: 30
 };
+
+let testMode = false;
 
 let questionBank = [];
 let soccerGame3D = null;
@@ -28,7 +34,7 @@ const state = {
   correctCount: 0,
   wrongCount: 0,
   timer: null,
-  timeLeft: CONFIG.TIMER_SECONDS,
+  questionDeadline: 0,
   questionStartTime: 0,
   quizStartTime: 0,
   answered: false,
@@ -41,10 +47,10 @@ const soccerState = {
   score: 0,
   correctCount: 0,
   wrongCount: 0,
-  timeLeft: CONFIG.TIMER_SECONDS,
   answered: false,
   lastAnswerFast: false,
   questionStartTime: 0,
+  questionDeadline: 0,
   quizStartTime: 0
 };
 
@@ -165,7 +171,51 @@ function playSound(type) {
   tryExtension(0);
 }
 
+function isTestMode() {
+  return testMode;
+}
+
+function getTimerSeconds() {
+  return testMode ? CONFIG.TEST_TIMER_SECONDS : CONFIG.TIMER_SECONDS;
+}
+
+function loadTestMode() {
+  try {
+    testMode = sessionStorage.getItem(CONFIG.TEST_MODE_KEY) === '1';
+  } catch {
+    testMode = false;
+  }
+  updateTestModeUI();
+}
+
+function setTestMode(enabled) {
+  testMode = !!enabled;
+  try {
+    sessionStorage.setItem(CONFIG.TEST_MODE_KEY, testMode ? '1' : '0');
+  } catch { /* ignore */ }
+  updateTestModeUI();
+}
+
+function updateTestModeUI() {
+  const chk = document.getElementById('chk-test-mode');
+  if (chk) chk.checked = testMode;
+  document.body.classList.toggle('test-mode-active', testMode);
+  document.querySelectorAll('.test-mode-badge').forEach((el) => {
+    el.classList.toggle('hidden', !testMode);
+  });
+}
+
+function clearRanking() {
+  if (!confirm('Zerar todo o ranking? Esta ação não pode ser desfeita.')) return;
+  try {
+    localStorage.removeItem(CONFIG.RANKING_KEY);
+  } catch { /* ignore */ }
+  renderRanking();
+}
+
 function validateForm() {
+  if (isTestMode()) return true;
+
   const name = document.getElementById('input-name').value.trim();
   const age = document.getElementById('input-age').value.trim();
   const course = document.getElementById('input-course').value.trim();
@@ -193,14 +243,41 @@ function validateForm() {
     document.getElementById('error-age').textContent = 'Idade inválida (1 a 120).';
     valid = false;
   }
+
+  if (name && name.length > CONFIG.MAX_NAME_LENGTH) {
+    document.getElementById('input-name').classList.add('invalid');
+    document.getElementById('error-name').textContent =
+      `O nome deve ter no máximo ${CONFIG.MAX_NAME_LENGTH} caracteres.`;
+    valid = false;
+  }
+
+  if (course && course.length > CONFIG.MAX_COURSE_LENGTH) {
+    document.getElementById('input-course').classList.add('invalid');
+    document.getElementById('error-course').textContent =
+      `O curso deve ter no máximo ${CONFIG.MAX_COURSE_LENGTH} caracteres.`;
+    valid = false;
+  }
+
   return valid;
 }
 
 function getPlayerData() {
+  const name = document.getElementById('input-name').value.trim();
+  const age = document.getElementById('input-age').value.trim();
+  const course = document.getElementById('input-course').value.trim();
+
+  if (isTestMode() && (!name || !age || !course)) {
+    return {
+      name: (name || 'Participante Teste').slice(0, CONFIG.MAX_NAME_LENGTH),
+      age: age || '18',
+      course: (course || 'Modo Teste').slice(0, CONFIG.MAX_COURSE_LENGTH)
+    };
+  }
+
   return {
-    name: document.getElementById('input-name').value.trim(),
-    age: document.getElementById('input-age').value.trim(),
-    course: document.getElementById('input-course').value.trim()
+    name: name.slice(0, CONFIG.MAX_NAME_LENGTH),
+    age,
+    course: course.slice(0, CONFIG.MAX_COURSE_LENGTH)
   };
 }
 
@@ -227,7 +304,7 @@ function startQuiz() {
 function renderQuestion() {
   const question = state.questions[state.currentIndex];
   state.answered = false;
-  state.timeLeft = CONFIG.TIMER_SECONDS;
+  state.questionDeadline = Date.now() + getTimerSeconds() * 1000;
   state.questionStartTime = Date.now();
 
   document.getElementById('current-question').textContent = state.currentIndex + 1;
@@ -250,29 +327,51 @@ function renderQuestion() {
     btn.className = 'option-btn';
     btn.innerHTML = `<span class="option-letter">${letters[i]}</span><span>${opt.text}</span>`;
     btn.addEventListener('click', () => handleAnswer(opt, btn, shuffledOptions));
+    if (isTestMode() && opt.correct) btn.classList.add('option-btn-test-hint');
     container.appendChild(btn);
   });
 
   startTimer();
 }
 
+function getQuestionTimeLeftMs(deadline) {
+  return Math.max(0, deadline - Date.now());
+}
+
+function formatQuestionTimer(msLeft) {
+  const ms = Math.max(0, msLeft);
+  const secs = Math.floor(ms / 1000);
+  const millis = ms % 1000;
+  return `${secs}.${String(millis).padStart(3, '0')}`;
+}
+
+function updateTimerWarningClass(displayEl, msLeft) {
+  if (!displayEl) return;
+  displayEl.classList.toggle('warning', msLeft <= 5000 && msLeft > 0);
+  displayEl.classList.toggle('critical', msLeft <= 2000 && msLeft > 0);
+}
+
 function startTimer() {
   clearInterval(state.timer);
-  updateTimerDisplay();
-  state.timer = setInterval(() => {
-    state.timeLeft--;
-    updateTimerDisplay();
-    if (state.timeLeft <= 0) {
-      clearInterval(state.timer);
-      if (!state.answered) handleTimeout();
-    }
-  }, 1000);
+  tickQuizTimer();
+  state.timer = setInterval(tickQuizTimer, 50);
+}
+
+function tickQuizTimer() {
+  const msLeft = getQuestionTimeLeftMs(state.questionDeadline);
+  document.getElementById('timer-value').textContent = formatQuestionTimer(msLeft);
+  updateTimerWarningClass(document.getElementById('timer-display'), msLeft);
+
+  if (msLeft <= 0) {
+    clearInterval(state.timer);
+    if (!state.answered) handleTimeout();
+  }
 }
 
 function updateTimerDisplay() {
-  document.getElementById('timer-value').textContent = state.timeLeft;
-  const timerDisplay = document.getElementById('timer-display');
-  timerDisplay.classList.toggle('warning', state.timeLeft <= 5);
+  const msLeft = getQuestionTimeLeftMs(state.questionDeadline);
+  document.getElementById('timer-value').textContent = formatQuestionTimer(msLeft);
+  updateTimerWarningClass(document.getElementById('timer-display'), msLeft);
 }
 
 function handleAnswer(selectedOption, clickedBtn, allOptions) {
@@ -281,7 +380,7 @@ function handleAnswer(selectedOption, clickedBtn, allOptions) {
   clearInterval(state.timer);
 
   const isCorrect = selectedOption.correct;
-  state.lastAnswerFast = state.timeLeft >= CONFIG.FAST_ANSWER_THRESHOLD;
+  state.lastAnswerFast = getQuestionTimeLeftMs(state.questionDeadline) >= CONFIG.FAST_ANSWER_THRESHOLD * 1000;
 
   document.querySelectorAll('.option-btn').forEach(btn => btn.disabled = true);
 
@@ -398,23 +497,27 @@ function nextQuestion() {
 }
 
 function finishQuiz() {
-  const totalTime = Math.round((Date.now() - state.quizStartTime) / 1000);
+  const finishTimeMs = Date.now() - state.quizStartTime;
   const totalQuestions = state.questions.length;
   const percent = Math.round((state.correctCount / totalQuestions) * 100);
 
-  const rankPosition = saveToRanking({
+  const rankPosition = isTestMode() ? 0 : saveToRanking({
     name: state.player.name,
     course: state.player.course,
     age: state.player.age,
     score: state.score,
+    finishTimeMs,
+    mode: 'quiz',
     date: new Date().toISOString()
   });
 
   document.getElementById('result-score').textContent = state.score;
   document.getElementById('result-correct').textContent = state.correctCount;
   document.getElementById('result-wrong').textContent = state.wrongCount;
-  document.getElementById('result-time').textContent = formatTime(totalTime);
-  document.getElementById('result-rank').textContent = rankPosition > 0 ? `${rankPosition}º` : '-';
+  document.getElementById('result-time').textContent = formatElapsedTime(finishTimeMs);
+  document.getElementById('result-rank').textContent = isTestMode()
+    ? 'Modo teste'
+    : (rankPosition > 0 ? `${rankPosition}º` : '-');
   document.getElementById('result-percent').textContent = `${percent}%`;
   document.getElementById('results-motivation').textContent = getMotivationalMessage(percent);
 
@@ -429,7 +532,7 @@ function finishQuiz() {
     certificate.classList.add('hidden');
   }
 
-  showPixRankHint(rankPosition, pixHint);
+  showPixRankHint(isTestMode() ? 0 : rankPosition, pixHint);
 
   document.getElementById('progress-fill').style.width = '100%';
   showScreen('results');
@@ -458,11 +561,30 @@ function startSoccerMode() {
 
   // Mostrar tela ANTES de criar o canvas (evita largura 0)
   showScreen('soccer');
+  initSoccerCrowdControls();
+  window.SoccerAudio?.startCrowd();
 
   requestAnimationFrame(() => {
-    initSoccerGame3D();
-    startSoccerQuestion();
+    requestAnimationFrame(() => {
+      initSoccerGame3D();
+      startSoccerQuestion();
+    });
   });
+}
+
+function updateKickPowerDisplay(power, visible) {
+  const wrap = document.getElementById('kick-power-wrap');
+  const fill = document.getElementById('kick-power-fill');
+  if (!wrap || !fill) return;
+  if (visible) {
+    wrap.classList.remove('hidden');
+    wrap.setAttribute('aria-hidden', 'false');
+    fill.style.width = `${Math.round(power * 100)}%`;
+  } else {
+    wrap.classList.add('hidden');
+    wrap.setAttribute('aria-hidden', 'true');
+    fill.style.width = '0%';
+  }
 }
 
 function initSoccerGame3D() {
@@ -470,8 +592,12 @@ function initSoccerGame3D() {
   if (soccerGame3D) soccerGame3D.destroy();
   container.innerHTML = '';
   soccerGame3D = new SoccerGame3D(container, {
-    onHit: (option) => handleSoccerHit(option)
+    onHit: (option) => handleSoccerHit(option),
+    onKick: () => window.SoccerAudio?.playKick(),
+    onPowerChange: (power, visible) => updateKickPowerDisplay(power, visible)
   });
+
+  requestAnimationFrame(() => soccerGame3D?.resize());
 
   const zoomIn = document.getElementById('btn-camera-zoom-in');
   const zoomOut = document.getElementById('btn-camera-zoom-out');
@@ -479,10 +605,20 @@ function initSoccerGame3D() {
   if (zoomOut) zoomOut.onclick = () => soccerGame3D?.zoomOut();
 }
 
+function initSoccerCrowdControls() {
+  window.SoccerAudio?.init();
+  window.SoccerAudio?.loadSavedVolume();
+
+  const volDown = document.getElementById('btn-crowd-volume-down');
+  const volUp = document.getElementById('btn-crowd-volume-up');
+  if (volDown) volDown.onclick = () => window.SoccerAudio?.adjustVolume(-0.1);
+  if (volUp) volUp.onclick = () => window.SoccerAudio?.adjustVolume(0.1);
+}
+
 function startSoccerQuestion() {
   const question = soccerState.questions[soccerState.currentIndex];
   soccerState.answered = false;
-  soccerState.timeLeft = CONFIG.TIMER_SECONDS;
+  soccerState.questionDeadline = Date.now() + getTimerSeconds() * 1000;
   soccerState.questionStartTime = Date.now();
 
   document.getElementById('soccer-current-question').textContent = soccerState.currentIndex + 1;
@@ -500,7 +636,7 @@ function startSoccerQuestion() {
   if (soccerGame3D) {
     requestAnimationFrame(() => {
       soccerGame3D.resize();
-      soccerGame3D.loadQuestion(currentSoccerOptions);
+      soccerGame3D.loadQuestion(currentSoccerOptions, { testMode: isTestMode() });
     });
   }
   startSoccerTimer();
@@ -508,20 +644,25 @@ function startSoccerQuestion() {
 
 function startSoccerTimer() {
   clearInterval(soccerTimer);
-  updateSoccerTimerDisplay();
-  soccerTimer = setInterval(() => {
-    soccerState.timeLeft--;
-    updateSoccerTimerDisplay();
-    if (soccerState.timeLeft <= 0) {
-      clearInterval(soccerTimer);
-      if (!soccerState.answered) handleSoccerTimeout();
-    }
-  }, 1000);
+  tickSoccerTimer();
+  soccerTimer = setInterval(tickSoccerTimer, 50);
+}
+
+function tickSoccerTimer() {
+  const msLeft = getQuestionTimeLeftMs(soccerState.questionDeadline);
+  document.getElementById('soccer-timer-value').textContent = formatQuestionTimer(msLeft);
+  updateTimerWarningClass(document.getElementById('soccer-timer-display'), msLeft);
+
+  if (msLeft <= 0) {
+    clearInterval(soccerTimer);
+    if (!soccerState.answered) handleSoccerTimeout();
+  }
 }
 
 function updateSoccerTimerDisplay() {
-  document.getElementById('soccer-timer-value').textContent = soccerState.timeLeft;
-  document.getElementById('soccer-timer-display').classList.toggle('warning', soccerState.timeLeft <= 5);
+  const msLeft = getQuestionTimeLeftMs(soccerState.questionDeadline);
+  document.getElementById('soccer-timer-value').textContent = formatQuestionTimer(msLeft);
+  updateTimerWarningClass(document.getElementById('soccer-timer-display'), msLeft);
 }
 
 function showSoccerPopup(text, isPositive) {
@@ -538,7 +679,7 @@ function handleSoccerHit(option) {
   clearInterval(soccerTimer);
 
   const isCorrect = option.correct;
-  soccerState.lastAnswerFast = soccerState.timeLeft >= CONFIG.FAST_ANSWER_THRESHOLD;
+  soccerState.lastAnswerFast = getQuestionTimeLeftMs(soccerState.questionDeadline) >= CONFIG.FAST_ANSWER_THRESHOLD * 1000;
 
   if (isCorrect) {
     soccerState.correctCount++;
@@ -546,14 +687,16 @@ function handleSoccerHit(option) {
     if (soccerState.lastAnswerFast) points += CONFIG.POINTS_BONUS_FAST;
     soccerState.score += points;
     document.getElementById('soccer-score').textContent = soccerState.score;
-    showSoccerPopup(`+${points} GOLS!`, true);
-    playSound('acertou');
+    showSoccerPopup(`GOL! +${points} pontos`, true);
+    window.SoccerAudio?.playGoalNarration();
   } else {
     soccerState.wrongCount++;
-    soccerState.score = Math.max(0, soccerState.score - CONFIG.POINTS_WRONG);
+    if (!isTestMode()) {
+      soccerState.score = Math.max(0, soccerState.score - CONFIG.POINTS_WRONG);
+    }
     document.getElementById('soccer-score').textContent = soccerState.score;
-    showSoccerPopup(`-${CONFIG.POINTS_WRONG} GOLS!`, false);
-    playSound('errou');
+    showSoccerPopup(`-${CONFIG.POINTS_WRONG} pontos`, false);
+    window.SoccerAudio?.playMissNarration();
   }
 
   feedbackMode = 'soccer';
@@ -565,7 +708,9 @@ function handleSoccerTimeout() {
   soccerState.answered = true;
   soccerState.wrongCount++;
   soccerState.lastAnswerFast = false;
-  soccerState.score = Math.max(0, soccerState.score - CONFIG.POINTS_WRONG);
+  if (!isTestMode()) {
+    soccerState.score = Math.max(0, soccerState.score - CONFIG.POINTS_WRONG);
+  }
   document.getElementById('soccer-score').textContent = soccerState.score;
 
   if (soccerGame3D) {
@@ -573,13 +718,14 @@ function handleSoccerTimeout() {
     soccerGame3D.highlightResults(null);
   }
 
-  showSoccerPopup(`-${CONFIG.POINTS_WRONG} GOLS! Tempo esgotado`, false);
-  playSound('errou');
+  showSoccerPopup(`-${CONFIG.POINTS_WRONG} pontos! Tempo esgotado`, false);
+  window.SoccerAudio?.playTimeoutNarration();
   feedbackMode = 'soccer';
   setTimeout(() => showFeedback(false, true), 1600);
 }
 
 function finishSoccerMode() {
+  window.SoccerAudio?.stopCrowd();
   if (soccerGame3D) {
     soccerGame3D.destroy();
     soccerGame3D = null;
@@ -591,36 +737,65 @@ function finishSoccerMode() {
     ? Math.round((soccerState.correctCount / totalQuestions) * 100)
     : 0;
 
-  const rankPosition = saveToRanking({
+  const finishTimeMs = Date.now() - soccerState.quizStartTime;
+
+  const rankPosition = isTestMode() ? 0 : saveToRanking({
     name: state.player.name,
     course: state.player.course,
     age: state.player.age,
     score: soccerState.score,
+    finishTimeMs,
+    mode: 'soccer',
     date: new Date().toISOString()
   });
 
   document.getElementById('soccer-result-score').textContent = soccerState.score;
   document.getElementById('soccer-result-correct').textContent = soccerState.correctCount;
   document.getElementById('soccer-result-wrong').textContent = soccerState.wrongCount;
-  document.getElementById('soccer-result-rank').textContent = rankPosition > 0 ? `${rankPosition}º` : '-';
+  document.getElementById('soccer-result-rank').textContent = isTestMode()
+    ? 'Modo teste'
+    : (rankPosition > 0 ? `${rankPosition}º` : '-');
   document.getElementById('soccer-result-percent').textContent = `${percent}%`;
   document.getElementById('soccer-results-motivation').textContent = getMotivationalMessage(percent);
 
-  showPixRankHint(rankPosition, document.getElementById('soccer-pix-winner-hint'));
+  showPixRankHint(isTestMode() ? 0 : rankPosition, document.getElementById('soccer-pix-winner-hint'));
+
+  if (totalQuestions > 0 && soccerState.correctCount === totalQuestions) {
+    window.SoccerAudio?.playAllPerfectEnd();
+  } else if (totalQuestions > 0 && soccerState.wrongCount === totalQuestions) {
+    window.SoccerAudio?.playAllWrongEnd();
+  }
 
   showScreen('soccerEnd');
 }
 
 function exitSoccerMode() {
-  if (soccerGame3D) {
-    soccerGame3D.destroy();
-    soccerGame3D = null;
-  }
-  clearInterval(soccerTimer);
-  showScreen('welcome');
+  goToHome();
 }
 
 // ========== Utilitários ==========
+
+function formatElapsedTime(ms) {
+  const totalMs = Math.max(0, Math.round(ms));
+  const mins = Math.floor(totalMs / 60000);
+  const secs = Math.floor((totalMs % 60000) / 1000);
+  const millis = totalMs % 1000;
+  const msStr = String(millis).padStart(3, '0');
+  if (mins > 0) return `${mins}m ${secs}s ${msStr}ms`;
+  return `${secs}s ${msStr}ms`;
+}
+
+function formatRankingTime(finishTimeMs) {
+  if (typeof finishTimeMs !== 'number' || finishTimeMs < 0) return '—';
+  return formatElapsedTime(finishTimeMs);
+}
+
+function compareRankingEntries(a, b) {
+  if (b.score !== a.score) return b.score - a.score;
+  const timeA = typeof a.finishTimeMs === 'number' ? a.finishTimeMs : Number.MAX_SAFE_INTEGER;
+  const timeB = typeof b.finishTimeMs === 'number' ? b.finishTimeMs : Number.MAX_SAFE_INTEGER;
+  return timeA - timeB;
+}
 
 function formatTime(seconds) {
   const mins = Math.floor(seconds / 60);
@@ -629,8 +804,8 @@ function formatTime(seconds) {
 }
 
 function getMotivationalMessage(percent) {
-  if (percent >= 90) return 'Golaço! Você é o craque da segurança digital nesta Copa!';
-  if (percent >= 80) return 'Grande jogo! Você está entre os artilheiros da segurança Wi-Fi!';
+  if (percent >= 90) return 'Arrasou! Você é o craque da segurança digital nesta Copa!';
+  if (percent >= 80) return 'Grande jogo! Você está entre os melhores pontuadores da segurança Wi-Fi!';
   if (percent >= 60) return 'Bom desempenho! Treine mais e dispute o Pix de R$ 50!';
   if (percent >= 40) return 'Você está no caminho! A Copa exige foco — tente de novo!';
   return 'Não desista! Todo campeão erra antes de levantar a taça!';
@@ -648,10 +823,16 @@ function getRanking() {
 function saveToRanking(entry) {
   const ranking = getRanking();
   ranking.push(entry);
-  ranking.sort((a, b) => b.score - a.score);
+  ranking.sort(compareRankingEntries);
   const trimmed = ranking.slice(0, CONFIG.MAX_RANKING);
   localStorage.setItem(CONFIG.RANKING_KEY, JSON.stringify(trimmed));
-  return trimmed.findIndex(r => r.name === entry.name && r.score === entry.score && r.date === entry.date) + 1;
+  const idx = trimmed.findIndex((r) =>
+    r.date === entry.date &&
+    r.name === entry.name &&
+    r.score === entry.score &&
+    r.finishTimeMs === entry.finishTimeMs
+  );
+  return idx >= 0 ? idx + 1 : 0;
 }
 
 function showPixRankHint(rankPosition, hintEl) {
@@ -693,7 +874,8 @@ function renderRanking() {
       <td class="rank-position">${i + 1}º</td>
       <td>${escapeHtml(entry.name)}${pixTag}</td>
       <td>${escapeHtml(entry.course)}</td>
-      <td class="rank-score">${entry.score} gols</td>
+      <td class="rank-score">${entry.score} pts</td>
+      <td class="rank-time">${formatRankingTime(entry.finishTimeMs)}</td>
     `;
     tbody.appendChild(tr);
   });
@@ -745,15 +927,26 @@ function launchConfetti() {
 }
 
 function resetGame() {
+  goToHome();
+  document.getElementById('form-start').reset();
+  document.querySelectorAll('.form-group input').forEach(i => i.classList.remove('invalid'));
+  document.querySelectorAll('.error-msg').forEach(el => { el.textContent = ''; });
+}
+
+function goToHome() {
+  const presentationScreen = document.getElementById('screen-presentation');
+  if (presentationScreen?.classList.contains('active') && typeof exitPresentation === 'function') {
+    exitPresentation();
+    return;
+  }
   clearInterval(state.timer);
   clearInterval(soccerTimer);
+  window.SoccerAudio?.stopCrowd();
   if (soccerGame3D) {
     soccerGame3D.destroy();
     soccerGame3D = null;
   }
-  document.getElementById('form-start').reset();
-  document.querySelectorAll('.form-group input').forEach(i => i.classList.remove('invalid'));
-  document.querySelectorAll('.error-msg').forEach(el => { el.textContent = ''; });
+  document.body.classList.remove('presentation-active');
   showScreen('welcome');
 }
 
@@ -788,7 +981,8 @@ document.getElementById('btn-view-ranking-results').addEventListener('click', ()
   renderRanking();
   showScreen('ranking');
 });
-document.getElementById('btn-back-home').addEventListener('click', () => showScreen('welcome'));
+document.getElementById('btn-back-home').addEventListener('click', goToHome);
+document.getElementById('btn-header-home')?.addEventListener('click', goToHome);
 
 window.addEventListener('resize', () => {
   const canvas = document.getElementById('confetti-canvas');
@@ -796,8 +990,15 @@ window.addEventListener('resize', () => {
   canvas.height = window.innerHeight;
   if (soccerGame3D && screens.soccer.classList.contains('active')) {
     soccerGame3D.resize();
-    soccerGame3D.loadQuestion(currentSoccerOptions);
+    soccerGame3D.loadQuestion(currentSoccerOptions, { testMode: isTestMode() });
   }
 });
 
+document.getElementById('btn-clear-ranking')?.addEventListener('click', clearRanking);
+document.getElementById('chk-test-mode')?.addEventListener('change', (e) => {
+  setTestMode(e.target.checked);
+});
+
 loadQuestions();
+loadTestMode();
+initSoccerCrowdControls();

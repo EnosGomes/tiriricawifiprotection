@@ -30,6 +30,12 @@
           <i class="fas fa-futbol"></i> COPA
         </div>
       </div>
+      <nav class="header-nav" aria-label="Navegação principal">
+        <button type="button" class="header-home-btn" id="btn-header-home" title="Voltar à página inicial">
+          <i class="fas fa-home"></i>
+          <span>Início</span>
+        </button>
+      </nav>
     </div>
   </header>
 
@@ -93,7 +99,7 @@
           <form id="form-start" novalidate>
             <div class="form-group">
               <label for="input-name"><i class="fas fa-user"></i> Nome</label>
-              <input type="text" id="input-name" placeholder="Seu nome completo" autocomplete="name">
+              <input type="text" id="input-name" placeholder="Seu nome completo" autocomplete="name" maxlength="30">
               <span class="error-msg" id="error-name"></span>
             </div>
             <div class="form-group">
@@ -103,7 +109,7 @@
             </div>
             <div class="form-group">
               <label for="input-course"><i class="fas fa-graduation-cap"></i> Curso</label>
-              <input type="text" id="input-course" placeholder="Ex: Informática, Administração...">
+              <input type="text" id="input-course" placeholder="Ex: Informática, Administração..." maxlength="30">
               <span class="error-msg" id="error-course"></span>
             </div>
             <button type="submit" class="btn btn-primary" id="btn-start-quiz">
@@ -118,6 +124,14 @@
           <button type="button" class="btn btn-ghost" id="btn-view-ranking-welcome">
             <i class="fas fa-trophy"></i> Ver Ranking e Prêmio
           </button>
+
+          <div class="test-mode-panel">
+            <label class="test-mode-toggle" for="chk-test-mode">
+              <input type="checkbox" id="chk-test-mode">
+              <span><i class="fas fa-flask"></i> Modo teste</span>
+            </label>
+            <p class="test-mode-hint">60s por pergunta, resposta certa destacada, sem salvar no ranking. Ideal para treinar antes da atividade.</p>
+          </div>
         </div>
       </div>
     </div>
@@ -160,14 +174,15 @@
   <!-- Tela do Quiz (múltipla escolha) -->
   <section id="screen-quiz" class="screen">
     <div class="quiz-header">
+      <span class="test-mode-badge hidden" id="quiz-test-badge"><i class="fas fa-flask"></i> Modo teste</span>
       <div class="player-info">
         <span id="quiz-player-name"></span>
-        <span class="score-badge"><i class="fas fa-futbol"></i> <span id="quiz-score">0</span> gols</span>
+        <span class="score-badge"><i class="fas fa-star"></i> <span id="quiz-score">0</span> pontos</span>
       </div>
       <div class="progress-section">
         <div class="progress-labels">
           <span>Pergunta <strong id="current-question">1</strong> de <strong id="total-questions">5</strong></span>
-          <span id="timer-display"><i class="fas fa-clock"></i> <span id="timer-value">20</span>s</span>
+          <span id="timer-display"><i class="fas fa-clock"></i> <span id="timer-value">20.000</span></span>
         </div>
         <div class="progress-bar">
           <div class="progress-fill" id="progress-fill"></div>
@@ -206,14 +221,15 @@
   <!-- Modo Chute 3D (opcional) -->
   <section id="screen-soccer" class="screen">
     <div class="game-hud">
+      <span class="test-mode-badge hidden" id="soccer-test-badge"><i class="fas fa-flask"></i> Modo teste</span>
       <div class="player-info">
         <span id="soccer-player-name"></span>
-        <span class="score-badge"><i class="fas fa-futbol"></i> <span id="soccer-score">0</span> gols</span>
+        <span class="score-badge"><i class="fas fa-star"></i> <span id="soccer-score">0</span> pontos</span>
       </div>
       <div class="progress-section">
         <div class="progress-labels">
           <span>Chute <strong id="soccer-current-question">1</strong> de <strong id="soccer-total-questions">5</strong></span>
-          <span id="soccer-timer-display"><i class="fas fa-clock"></i> <span id="soccer-timer-value">20</span>s</span>
+          <span id="soccer-timer-display"><i class="fas fa-clock"></i> <span id="soccer-timer-value">20.000</span></span>
         </div>
         <div class="progress-bar">
           <div class="progress-fill" id="soccer-progress-fill"></div>
@@ -229,7 +245,7 @@
         </figure>
         <h2 id="soccer-question-text"></h2>
       </div>
-      <p class="game-hint"><i class="fas fa-mouse-pointer"></i> Segure o <strong>botão esquerdo</strong>, arraste e solte. Use <strong>+ / −</strong> para aproximar ou afastar a câmera.</p>
+      <p class="game-hint"><i class="fas fa-futbol"></i> Aponte para o gol, <strong>segure</strong> para carregar a força e <strong>solte</strong> para chutar. Use <strong>+ / −</strong> na câmera.</p>
     </div>
 
     <div class="game-wrapper" id="game-3d-wrapper">
@@ -241,9 +257,25 @@
           <i class="fas fa-search-minus"></i>
         </button>
       </div>
+      <div class="game-crowd-controls" aria-label="Volume da torcida">
+        <span class="game-crowd-label"><i class="fas fa-users"></i> Torcida</span>
+        <button type="button" class="btn-camera-zoom" id="btn-crowd-volume-down" title="Diminuir torcida" aria-label="Diminuir volume da torcida">
+          <i class="fas fa-volume-down"></i>
+        </button>
+        <span class="crowd-volume-value" id="crowd-volume-value">20%</span>
+        <button type="button" class="btn-camera-zoom" id="btn-crowd-volume-up" title="Aumentar torcida" aria-label="Aumentar volume da torcida">
+          <i class="fas fa-volume-up"></i>
+        </button>
+      </div>
+      <div class="kick-power-wrap hidden" id="kick-power-wrap" aria-hidden="true">
+        <span class="kick-power-label">Força do chute</span>
+        <div class="kick-power-bar">
+          <div class="kick-power-fill" id="kick-power-fill"></div>
+        </div>
+      </div>
       <div id="game-3d-container"></div>
       <div class="game-score-popup hidden" id="soccer-score-popup">
-        <span id="soccer-score-popup-text">+10 GOLS!</span>
+        <span id="soccer-score-popup-text">GOL! +10 pontos</span>
       </div>
     </div>
 
@@ -265,9 +297,9 @@
 
       <div class="stats-grid">
         <div class="stat-item">
-          <i class="fas fa-futbol"></i>
+          <i class="fas fa-star"></i>
           <span class="stat-value" id="soccer-result-score">0</span>
-          <span class="stat-label">Gols</span>
+          <span class="stat-label">Pontos</span>
         </div>
         <div class="stat-item stat-success">
           <i class="fas fa-check-circle"></i>
@@ -315,7 +347,7 @@
       <p id="feedback-message"></p>
       <p class="feedback-explanation" id="feedback-explanation"></p>
       <div class="bonus-badge hidden" id="bonus-badge">
-        <i class="fas fa-bolt"></i> +5 gols de bônus por resposta rápida!
+        <i class="fas fa-bolt"></i> +5 pontos de bônus por resposta rápida!
       </div>
       <button type="button" class="btn btn-primary" id="btn-next-question">
         Próxima Pergunta <i class="fas fa-arrow-right"></i>
@@ -343,9 +375,9 @@
 
       <div class="stats-grid">
         <div class="stat-item">
-          <i class="fas fa-futbol"></i>
+          <i class="fas fa-star"></i>
           <span class="stat-value" id="result-score">0</span>
-          <span class="stat-label">Gols (Pontos)</span>
+          <span class="stat-label">Pontos</span>
         </div>
         <div class="stat-item stat-success">
           <i class="fas fa-check-circle"></i>
@@ -407,8 +439,8 @@
         </div>
         <div class="pix-prize-ranking-text">
           <h3>🏆 Prêmio do Campeão</h3>
-          <p>Quem ficar em <strong>1º lugar</strong> no scoreboard ganha um <strong>Pix de R$ 50,00</strong>!</p>
-          <p class="pix-disclaimer"><i class="fas fa-info-circle"></i> Prêmio válido para a melhor pontuação do ranking.</p>
+          <p>Quem ficar em <strong>1º lugar</strong> no Ranking ganha um <strong>Pix de R$ 50,00</strong>!</p>
+          <p class="pix-disclaimer"><i class="fas fa-info-circle"></i> Prêmio válido para a melhor pontuação do ranking. Em empate de pontos, vence quem terminar mais rápido.</p>
         </div>
       </div>
 
@@ -420,6 +452,7 @@
               <th>Nome</th>
               <th>Curso</th>
               <th>Pontuação</th>
+              <th>Tempo</th>
             </tr>
           </thead>
           <tbody id="ranking-body"></tbody>
@@ -427,12 +460,17 @@
       </div>
 
       <p class="empty-ranking hidden" id="empty-ranking">
-        <i class="fas fa-info-circle"></i> Nenhum resultado registrado ainda. Seja o primeiro artilheiro!
+        <i class="fas fa-info-circle"></i> Nenhum resultado registrado ainda. Seja o primeiro no ranking!
       </p>
 
-      <button type="button" class="btn btn-ghost" id="btn-back-home">
-        <i class="fas fa-home"></i> Voltar ao Início
-      </button>
+      <div class="ranking-admin-actions">
+        <button type="button" class="btn btn-danger-ghost" id="btn-clear-ranking">
+          <i class="fas fa-trash-alt"></i> Zerar ranking
+        </button>
+        <button type="button" class="btn btn-ghost" id="btn-back-home">
+          <i class="fas fa-home"></i> Voltar ao Início
+        </button>
+      </div>
     </div>
   </section>
 
@@ -450,6 +488,7 @@
   <script src="questions.js"></script>
   <script src="question-images.js"></script>
   <script src="game3d.js"></script>
+  <script src="soccer-audio.js"></script>
   <script src="script.js"></script>
   <script src="presentation.js"></script>
 </body>

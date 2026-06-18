@@ -133,7 +133,7 @@ const PRESENTATION_SLIDES = [
     bullets: [
       'Preencha nome, idade e curso na página inicial.',
       'Responda 5 perguntas no quiz — 20 segundos cada.',
-      'Ganhe gols por acerto (+10) e bônus por resposta rápida.',
+      'Ganhe pontos por acerto (+10) e bônus por resposta rápida.',
       'Entre no ranking: 1º lugar concorre ao Pix de R$ 50!',
       'Modo Chute 3D é opcional — diversão com as mesmas questões.'
     ]

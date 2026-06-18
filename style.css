@@ -211,6 +211,41 @@ body {
   margin-right: 0.25rem;
 }
 
+.header-nav {
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.header-home-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.5rem 1rem;
+  border-radius: 24px;
+  border: 2px solid var(--brazil-yellow);
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--white);
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+  font-family: inherit;
+}
+
+.header-home-btn i {
+  color: var(--brazil-yellow);
+}
+
+.header-home-btn:hover {
+  background: rgba(255, 223, 0, 0.2);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+.header-home-btn:active {
+  transform: translateY(0);
+}
+
 @keyframes pulseBadge {
   0%, 100% { box-shadow: 0 0 0 0 rgba(255, 223, 0, 0.4); }
   50% { box-shadow: 0 0 0 8px rgba(255, 223, 0, 0); }
@@ -666,6 +701,107 @@ h2 {
 
 .btn-ghost:hover { color: var(--brazil-yellow); }
 
+.btn-danger-ghost {
+  background: rgba(153, 27, 27, 0.15);
+  color: #fca5a5;
+  border: 1px solid rgba(248, 113, 113, 0.45);
+  margin-top: 0;
+  width: auto;
+  padding: 0.6rem 1rem;
+  font-size: 0.9rem;
+}
+
+.btn-danger-ghost:hover {
+  color: #fff;
+  background: rgba(153, 27, 27, 0.35);
+}
+
+.test-mode-panel {
+  margin-top: 1rem;
+  padding: 0.85rem 1rem;
+  border-radius: var(--radius-sm);
+  border: 1px dashed rgba(255, 223, 0, 0.45);
+  background: rgba(0, 39, 118, 0.25);
+}
+
+.test-mode-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  cursor: pointer;
+  color: var(--school-cream);
+  font-weight: 700;
+  font-size: 0.92rem;
+}
+
+.test-mode-toggle input {
+  width: 1.05rem;
+  height: 1.05rem;
+  accent-color: var(--brazil-yellow);
+}
+
+.test-mode-toggle i {
+  color: var(--brazil-yellow);
+}
+
+.test-mode-hint {
+  margin: 0.45rem 0 0 1.6rem;
+  font-size: 0.78rem;
+  color: var(--gray-400);
+  line-height: 1.4;
+}
+
+.test-mode-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  align-self: flex-start;
+  margin-bottom: 0.5rem;
+  padding: 0.3rem 0.75rem;
+  border-radius: 20px;
+  background: rgba(120, 53, 15, 0.9);
+  border: 1px solid #fbbf24;
+  color: #fef3c7;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+.test-mode-badge.hidden {
+  display: none;
+}
+
+.test-mode-badge i {
+  color: #fbbf24;
+}
+
+.option-btn-test-hint {
+  border-color: #4ade80 !important;
+  box-shadow: 0 0 0 2px rgba(74, 222, 128, 0.35), inset 0 0 0 1px rgba(74, 222, 128, 0.25);
+}
+
+.option-btn-test-hint::after {
+  content: '✓ certa';
+  display: block;
+  font-size: 0.72rem;
+  color: #4ade80;
+  margin-top: 0.25rem;
+  font-weight: 700;
+}
+
+.ranking-admin-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  justify-content: center;
+  margin-top: 1.25rem;
+}
+
+#screen-quiz .quiz-header,
+#screen-soccer .game-hud {
+  position: relative;
+}
+
 /* Jogo de chute 3D */
 #screen-soccer.active {
   justify-content: flex-start;
@@ -687,20 +823,25 @@ h2 {
   width: 100%;
   height: 480px;
   min-height: 380px;
+  flex-shrink: 0;
   border-radius: var(--radius);
   overflow: hidden;
   border: 3px solid var(--brazil-yellow);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
   background: #1a8a42;
   position: relative;
+  z-index: 0;
 }
 
 #game-3d-container canvas {
   display: block;
+  position: absolute;
+  inset: 0;
   width: 100% !important;
   height: 100% !important;
-  cursor: crosshair;
+  cursor: pointer;
   touch-action: none;
+  z-index: 0;
 }
 
 .game-error {
@@ -962,6 +1103,81 @@ h2 {
   gap: 0.5rem;
 }
 
+.game-crowd-controls {
+  position: absolute;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.5rem;
+  border-radius: var(--radius-sm);
+  background: rgba(0, 39, 118, 0.92);
+  border: 2px solid var(--brazil-yellow);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+}
+
+.game-crowd-label {
+  color: var(--white);
+  font-size: 0.78rem;
+  font-weight: 700;
+  margin-right: 0.15rem;
+  white-space: nowrap;
+}
+
+.game-crowd-label i {
+  color: var(--brazil-yellow);
+  margin-right: 0.2rem;
+}
+
+.crowd-volume-value {
+  color: var(--brazil-yellow);
+  font-size: 0.8rem;
+  font-weight: 800;
+  min-width: 2.5rem;
+  text-align: center;
+}
+
+.kick-power-wrap {
+  position: absolute;
+  bottom: 0.85rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  width: min(280px, 70%);
+  text-align: center;
+}
+
+.kick-power-wrap.hidden {
+  display: none;
+}
+
+.kick-power-label {
+  display: block;
+  color: var(--white);
+  font-size: 0.78rem;
+  font-weight: 700;
+  margin-bottom: 0.35rem;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+}
+
+.kick-power-bar {
+  height: 12px;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.45);
+  border: 2px solid var(--brazil-yellow);
+  overflow: hidden;
+}
+
+.kick-power-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--brazil-green), var(--brazil-yellow));
+  transition: width 0.05s linear;
+  border-radius: 4px;
+}
+
 .btn-camera-zoom {
   width: 2.75rem;
   height: 2.75rem;
@@ -1104,14 +1320,27 @@ h2 {
   animation: pulse 0.8s infinite;
 }
 
+#timer-display.critical,
+#soccer-timer-display.critical {
+  color: var(--white);
+  background: rgba(127, 29, 29, 0.98);
+  border-color: #ef4444;
+  box-shadow: 0 0 16px rgba(239, 68, 68, 0.55);
+  animation: pulse 0.45s infinite;
+}
+
 #timer-display.warning i,
-#soccer-timer-display.warning i {
+#soccer-timer-display.warning i,
+#timer-display.critical i,
+#soccer-timer-display.critical i {
   color: #fecaca;
 }
 
 #timer-display.warning #timer-value,
-#soccer-timer-display.warning #soccer-timer-value {
-  color: var(--white);
+#soccer-timer-display.warning #soccer-timer-value,
+#timer-display.critical #timer-value,
+#soccer-timer-display.critical #soccer-timer-value {
+  color: #fff;
 }
 
 @keyframes pulse {
@@ -1530,6 +1759,13 @@ h2 {
   color: var(--green-success);
 }
 
+.rank-time {
+  font-weight: 600;
+  color: var(--gray-300);
+  font-size: 0.88rem;
+  white-space: nowrap;
+}
+
 .empty-ranking {
   text-align: center;
   color: var(--gray-400);
@@ -1604,7 +1840,9 @@ h2 {
   }
 
   .header-divider { display: none; }
-  .header-badges { margin-left: auto; }
+  .header-badges { margin-left: 0; }
+  .header-nav { margin-left: auto; width: 100%; justify-content: flex-end; display: flex; }
+  .header-home-btn span { display: none; }
 
   .screen {
     min-height: calc(100vh - 7rem);
