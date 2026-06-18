@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Copa WiFi Seguro — Edição Copa do Mundo</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="bg-pattern"></div>
+  <div class="school-pattern" aria-hidden="true"></div>
+  <div class="copa-stripes" aria-hidden="true"></div>
+
+  <header class="app-header">
+    <div class="header-inner">
+      <div class="header-brand">
+        <img src="assets/edufor-logo.png" alt="Faculdade Edufor" class="edufor-logo">
+      </div>
+      <div class="header-divider"></div>
+      <div class="header-info">
+        <p class="header-discipline">Práticas de Extensão Universitária V</p>
+        <p class="header-institution"><i class="fas fa-university"></i> Faculdade Edufor</p>
+      </div>
+      <div class="header-badges">
+        <div class="school-badge" title="Projeto em escolas">
+          <i class="fas fa-school"></i> ESCOLAS
+        </div>
+        <div class="copa-badge" title="Edição Copa do Mundo">
+          <i class="fas fa-futbol"></i> COPA
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="app-main">
+
+  <!-- Tela Inicial -->
+  <section id="screen-welcome" class="screen active">
+    <div class="welcome-layout">
+      <div class="hero-panel">
+        <div class="hero-image-wrap">
+          <!-- Imagem alternativa (reserva): assets/aluno-copa-wifi.png -->
+          <img src="assets/sala-aula-copa-wifi.png" alt="Sala de aula decorada para a Copa — crianças conectadas ao Wi-Fi com roteador na parede" class="hero-image">
+          <div class="hero-badges">
+            <span class="hero-tag"><i class="fas fa-wifi"></i> Wi-Fi</span>
+            <span class="hero-tag"><i class="fas fa-shield-halved"></i> Segurança</span>
+            <span class="hero-tag hero-tag-school"><i class="fas fa-school"></i> Escolas</span>
+            <span class="hero-tag"><i class="fas fa-futbol"></i> Copa 2026</span>
+          </div>
+        </div>
+        <div class="hero-titles">
+          <div class="edition-tags">
+            <p class="edition-tag">⚽ Edição Copa do Mundo</p>
+            <p class="edition-tag edition-tag-school"><i class="fas fa-chalkboard-user"></i> Projeto de Extensão em Escolas</p>
+          </div>
+          <h1 class="app-title">Copa WiFi Seguro nas Escolas</h1>
+          <p class="hero-tagline">Descubra se você está preparado para usar redes Wi-Fi de forma segura nas escolas.</p>
+          <ul class="school-highlights" aria-label="Contexto escolar">
+            <li><i class="fas fa-laptop"></i> Laboratório de informática</li>
+            <li><i class="fas fa-book-open"></i> Sala de aula conectada</li>
+            <li><i class="fas fa-user-graduate"></i> Alunos e comunidade escolar</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="welcome-side">
+        <!-- Arte Prêmio Pix -->
+        <div class="pix-prize-banner">
+          <img src="assets/premio-pix-50.png" alt="Prêmio Pix R$ 50" class="pix-prize-img">
+          <div class="pix-prize-content">
+            <div class="pix-art" aria-hidden="true">
+              <svg class="pix-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <path d="M50 8 L88 28 L88 72 L50 92 L12 72 L12 28 Z" fill="none" stroke="#32BCAD" stroke-width="4"/>
+                <path d="M50 22 L72 35 L72 65 L50 78 L28 65 L28 35 Z" fill="#32BCAD" opacity="0.25"/>
+                <text x="50" y="58" text-anchor="middle" fill="#32BCAD" font-size="22" font-weight="bold" font-family="sans-serif">pix</text>
+              </svg>
+              <div class="pix-amount">
+                <span class="pix-currency">R$</span>
+                <span class="pix-value">50</span>
+              </div>
+            </div>
+            <p class="pix-prize-text">
+              <i class="fas fa-trophy"></i>
+              <strong>1º lugar no ranking</strong> ganha um Pix de <strong>R$ 50,00</strong>!
+            </p>
+          </div>
+        </div>
+
+        <div class="card glass card-school">
+          <div class="school-card-header">
+            <i class="fas fa-clipboard-list"></i>
+            <span>Inscrição do participante</span>
+          </div>
+          <form id="form-start" novalidate>
+            <div class="form-group">
+              <label for="input-name"><i class="fas fa-user"></i> Nome</label>
+              <input type="text" id="input-name" placeholder="Seu nome completo" autocomplete="name">
+              <span class="error-msg" id="error-name"></span>
+            </div>
+            <div class="form-group">
+              <label for="input-age"><i class="fas fa-calendar"></i> Idade</label>
+              <input type="number" id="input-age" placeholder="Sua idade" min="1" max="120">
+              <span class="error-msg" id="error-age"></span>
+            </div>
+            <div class="form-group">
+              <label for="input-course"><i class="fas fa-graduation-cap"></i> Curso</label>
+              <input type="text" id="input-course" placeholder="Ex: Informática, Administração...">
+              <span class="error-msg" id="error-course"></span>
+            </div>
+            <button type="submit" class="btn btn-primary" id="btn-start-quiz">
+              <i class="fas fa-play" id="btn-start-icon"></i>
+              <span id="btn-start-text">Começar Quiz</span>
+            </button>
+            <button type="button" class="btn btn-secondary" id="btn-start-soccer">
+              <i class="fas fa-futbol"></i> Modo Chute 3D
+            </button>
+          </form>
+
+          <button type="button" class="btn btn-ghost" id="btn-view-ranking-welcome">
+            <i class="fas fa-trophy"></i> Ver Ranking e Prêmio
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Tela do Quiz (múltipla escolha) -->
+  <section id="screen-quiz" class="screen">
+    <div class="quiz-header">
+      <div class="player-info">
+        <span id="quiz-player-name"></span>
+        <span class="score-badge"><i class="fas fa-futbol"></i> <span id="quiz-score">0</span> gols</span>
+      </div>
+      <div class="progress-section">
+        <div class="progress-labels">
+          <span>Pergunta <strong id="current-question">1</strong> de <strong id="total-questions">5</strong></span>
+          <span id="timer-display"><i class="fas fa-clock"></i> <span id="timer-value">20</span>s</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="progress-fill"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="quiz-sheet-banner">
+      <span class="quiz-sheet-icon" aria-hidden="true"><i class="fas fa-book-open"></i></span>
+      <div>
+        <p class="quiz-sheet-label">Atividade em Sala — Segurança Digital</p>
+        <p class="quiz-sheet-hint">Responda com atenção, como em uma avaliação escolar</p>
+      </div>
+    </div>
+
+    <div class="card glass quiz-card notebook-card">
+      <div class="notebook-margin" aria-hidden="true"></div>
+      <div class="notebook-body">
+        <div class="question-sheet-meta">
+          <span><i class="fas fa-pencil"></i> Prova objetiva</span>
+          <span><i class="fas fa-wifi"></i> Wi-Fi seguro na escola</span>
+        </div>
+        <h2 id="question-text"></h2>
+        <div class="options-grid" id="options-container"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Modo Chute 3D (opcional) -->
+  <section id="screen-soccer" class="screen">
+    <div class="game-hud">
+      <div class="player-info">
+        <span id="soccer-player-name"></span>
+        <span class="score-badge"><i class="fas fa-futbol"></i> <span id="soccer-score">0</span> gols</span>
+      </div>
+      <div class="progress-section">
+        <div class="progress-labels">
+          <span>Chute <strong id="soccer-current-question">1</strong> de <strong id="soccer-total-questions">5</strong></span>
+          <span id="soccer-timer-display"><i class="fas fa-clock"></i> <span id="soccer-timer-value">20</span>s</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="soccer-progress-fill"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="game-question-bar school-question-bar">
+      <p class="quiz-sheet-label"><i class="fas fa-chalkboard"></i> Questão do laboratório</p>
+      <h2 id="soccer-question-text"></h2>
+      <p class="game-hint"><i class="fas fa-mouse-pointer"></i> Segure o <strong>botão esquerdo</strong>, arraste e solte. Use <strong>+ / −</strong> para aproximar ou afastar a câmera.</p>
+    </div>
+
+    <div class="game-wrapper" id="game-3d-wrapper">
+      <div class="game-camera-controls">
+        <button type="button" class="btn-camera-zoom" id="btn-camera-zoom-in" title="Aproximar câmera" aria-label="Aproximar câmera">
+          <i class="fas fa-search-plus"></i>
+        </button>
+        <button type="button" class="btn-camera-zoom" id="btn-camera-zoom-out" title="Afastar câmera" aria-label="Afastar câmera">
+          <i class="fas fa-search-minus"></i>
+        </button>
+      </div>
+      <div id="game-3d-container"></div>
+      <div class="game-score-popup hidden" id="soccer-score-popup">
+        <span id="soccer-score-popup-text">+10 GOLS!</span>
+      </div>
+    </div>
+
+    <button type="button" class="btn btn-ghost btn-exit-game" id="btn-exit-soccer">
+      <i class="fas fa-arrow-left"></i> Voltar ao início
+    </button>
+  </section>
+
+  <!-- Tela de fim do modo chute -->
+  <section id="screen-soccer-end" class="screen">
+    <div class="card glass results-card">
+      <div class="pix-prize-mini hidden" id="soccer-pix-winner-hint">
+        <i class="fas fa-medal"></i>
+        <span>Você está no páreo pelo <strong>Pix de R$ 50</strong>! Confira o ranking.</span>
+      </div>
+
+      <h2>⚽ Fim do Modo Chute 3D!</h2>
+      <p class="results-subtitle" id="soccer-results-motivation"></p>
+
+      <div class="stats-grid">
+        <div class="stat-item">
+          <i class="fas fa-futbol"></i>
+          <span class="stat-value" id="soccer-result-score">0</span>
+          <span class="stat-label">Gols</span>
+        </div>
+        <div class="stat-item stat-success">
+          <i class="fas fa-check-circle"></i>
+          <span class="stat-value" id="soccer-result-correct">0</span>
+          <span class="stat-label">Acertos</span>
+        </div>
+        <div class="stat-item stat-error">
+          <i class="fas fa-times-circle"></i>
+          <span class="stat-value" id="soccer-result-wrong">0</span>
+          <span class="stat-label">Erros</span>
+        </div>
+        <div class="stat-item stat-rank">
+          <i class="fas fa-medal"></i>
+          <span class="stat-value" id="soccer-result-rank">-</span>
+          <span class="stat-label">Posição no Ranking</span>
+        </div>
+        <div class="stat-item">
+          <i class="fas fa-percentage"></i>
+          <span class="stat-value" id="soccer-result-percent">0%</span>
+          <span class="stat-label">Taxa de Acerto</span>
+        </div>
+      </div>
+      <div class="results-actions">
+        <button type="button" class="btn btn-primary" id="btn-soccer-play-again">
+          <i class="fas fa-redo"></i> Jogar de Novo
+        </button>
+        <button type="button" class="btn btn-secondary" id="btn-view-ranking-soccer">
+          <i class="fas fa-trophy"></i> Ver Ranking e Prêmio Pix
+        </button>
+        <button type="button" class="btn btn-ghost" id="btn-soccer-home">
+          <i class="fas fa-home"></i> Voltar ao Início
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Tela de Feedback -->
+  <section id="screen-feedback" class="screen">
+    <div class="card glass feedback-card" id="feedback-card">
+      <div class="feedback-icon" id="feedback-icon"></div>
+      <h2 id="feedback-title"></h2>
+      <p id="feedback-message"></p>
+      <p class="feedback-explanation" id="feedback-explanation"></p>
+      <div class="bonus-badge hidden" id="bonus-badge">
+        <i class="fas fa-bolt"></i> +5 gols de bônus por resposta rápida!
+      </div>
+      <button type="button" class="btn btn-primary" id="btn-next-question">
+        Próxima Pergunta <i class="fas fa-arrow-right"></i>
+      </button>
+    </div>
+  </section>
+
+  <!-- Tela Final -->
+  <section id="screen-results" class="screen">
+    <div class="card glass results-card">
+      <div class="certificate hidden" id="certificate">
+        <div class="cert-school-ribbon"><i class="fas fa-graduation-cap"></i></div>
+        <div class="cert-badge">🏆⚽📚</div>
+        <h2>Certificado — Guardião Wi-Fi da Escola</h2>
+        <p>Parabéns! Você demonstrou excelentes conhecimentos sobre segurança digital no ambiente escolar.</p>
+      </div>
+
+      <div class="pix-prize-mini hidden" id="pix-winner-hint">
+        <i class="fas fa-medal"></i>
+        <span>Você está no páreo pelo <strong>Pix de R$ 50</strong>! Confira o ranking.</span>
+      </div>
+
+      <h2 id="results-title">Fim de Jogo!</h2>
+      <p class="results-subtitle" id="results-motivation"></p>
+
+      <div class="stats-grid">
+        <div class="stat-item">
+          <i class="fas fa-futbol"></i>
+          <span class="stat-value" id="result-score">0</span>
+          <span class="stat-label">Gols (Pontos)</span>
+        </div>
+        <div class="stat-item stat-success">
+          <i class="fas fa-check-circle"></i>
+          <span class="stat-value" id="result-correct">0</span>
+          <span class="stat-label">Acertos</span>
+        </div>
+        <div class="stat-item stat-error">
+          <i class="fas fa-times-circle"></i>
+          <span class="stat-value" id="result-wrong">0</span>
+          <span class="stat-label">Erros</span>
+        </div>
+        <div class="stat-item">
+          <i class="fas fa-stopwatch"></i>
+          <span class="stat-value" id="result-time">0s</span>
+          <span class="stat-label">Tempo Total</span>
+        </div>
+        <div class="stat-item stat-rank">
+          <i class="fas fa-medal"></i>
+          <span class="stat-value" id="result-rank">-</span>
+          <span class="stat-label">Posição no Ranking</span>
+        </div>
+        <div class="stat-item">
+          <i class="fas fa-percentage"></i>
+          <span class="stat-value" id="result-percent">0%</span>
+          <span class="stat-label">Taxa de Acerto</span>
+        </div>
+      </div>
+
+      <div class="results-actions">
+        <button type="button" class="btn btn-primary" id="btn-play-again">
+          <i class="fas fa-redo"></i> Jogar Novamente
+        </button>
+        <button type="button" class="btn btn-secondary" id="btn-view-ranking-results">
+          <i class="fas fa-trophy"></i> Ver Ranking e Prêmio Pix
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Tela de Ranking -->
+  <section id="screen-ranking" class="screen">
+    <div class="card glass ranking-card">
+      <h2><i class="fas fa-trophy"></i> Hall da Fama — Copa Wi-Fi Seguro</h2>
+      <p class="subtitle">Os 20 melhores guardiões da segurança digital nas escolas</p>
+
+      <!-- Banner prêmio Pix no ranking -->
+      <div class="pix-prize-ranking">
+        <div class="pix-prize-ranking-art">
+          <img src="assets/premio-pix-50.png" alt="Prêmio R$ 50 via Pix">
+          <div class="pix-css-art">
+            <svg viewBox="0 0 80 80" class="pix-diamond">
+              <path d="M40 5 L70 22 L70 58 L40 75 L10 58 L10 22 Z" fill="#32BCAD" opacity="0.2"/>
+              <path d="M40 5 L70 22 L70 58 L40 75 L10 58 L10 22 Z" fill="none" stroke="#32BCAD" stroke-width="3"/>
+            </svg>
+            <div class="pix-money">
+              <span>R$</span><strong>50</strong>
+            </div>
+          </div>
+        </div>
+        <div class="pix-prize-ranking-text">
+          <h3>🏆 Prêmio do Campeão</h3>
+          <p>Quem ficar em <strong>1º lugar</strong> no scoreboard ganha um <strong>Pix de R$ 50,00</strong>!</p>
+          <p class="pix-disclaimer"><i class="fas fa-info-circle"></i> Prêmio válido para a melhor pontuação do ranking.</p>
+        </div>
+      </div>
+
+      <div class="table-wrapper">
+        <table class="ranking-table">
+          <thead>
+            <tr>
+              <th>Posição</th>
+              <th>Nome</th>
+              <th>Curso</th>
+              <th>Pontuação</th>
+            </tr>
+          </thead>
+          <tbody id="ranking-body"></tbody>
+        </table>
+      </div>
+
+      <p class="empty-ranking hidden" id="empty-ranking">
+        <i class="fas fa-info-circle"></i> Nenhum resultado registrado ainda. Seja o primeiro artilheiro!
+      </p>
+
+      <button type="button" class="btn btn-ghost" id="btn-back-home">
+        <i class="fas fa-home"></i> Voltar ao Início
+      </button>
+    </div>
+  </section>
+
+  <canvas id="confetti-canvas"></canvas>
+  </main>
+
+  <footer class="app-footer">
+    <div class="footer-inner">
+      <p><i class="fas fa-school"></i> <strong>Copa WiFi Seguro nas Escolas</strong> — extensão universitária em segurança digital</p>
+      <p class="footer-meta">Faculdade Edufor · Práticas de Extensão Universitária V · Copa do Mundo 2026</p>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+  <script src="questions.js"></script>
+  <script src="game3d.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
